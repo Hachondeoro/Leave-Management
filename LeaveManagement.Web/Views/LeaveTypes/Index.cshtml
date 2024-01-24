@@ -1,51 +1,62 @@
 ﻿@model IEnumerable<LeaveTypeVM>
 
 @{
-    ViewData["Title"] = "Index";
+  ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
 <p>
-    <a class="btn btn-success" asp-action="Create"><i class="fas fa-plus"></i> Create New</a>
+  <a class="btn btn-success" asp-action="Create"><i class="fas fa-plus"></i> Create New</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultDays)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultDays)
-            </td>
-            <td>
-                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i></a> 
-                <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id"> <i class="fas fa-info-circle"></i></a> 
-                <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button"> <i class="far fa-trash-alt"></i></button>
-            </td>
-        </tr>
-}
-    </tbody>
+  <thead>
+  <tr>
+    <th>
+      @Html.DisplayNameFor(model => model.Name)
+    </th>
+    <th>
+      @Html.DisplayNameFor(model => model.DefaultDays)
+    </th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  @foreach (var item in Model)
+  {
+    <tr>
+      <td>
+        @Html.DisplayFor(modelItem => item.Name)
+      </td>
+      <td>
+        @Html.DisplayFor(modelItem => item.DefaultDays)
+      </td>
+      <td>
+        <button data-id="@item.Id " class="btn btn-primary allocateBtn " type="button"> Allocate Leave</button>
+        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">
+          <i class="fas fa-pencil-alt"></i>
+        </a>
+        <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">
+          <i class="fas fa-info-circle"></i>
+        </a>
+        <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button">
+          <i class="far fa-trash-alt"></i>
+        </button>
+      </td>
+    </tr>
+  }
+  </tbody>
 </table>
 
 <form id="deleteFrom" asp-action="Delete">
-    <input type="hidden" id="leaveTypeId" name="Id"/>
+  <input type="hidden" id="leaveTypeId" name="Id"/>
+</form>
+<form id="allocationForm" asp-action="AllocateLeave">
+  <input type="hidden" id="leaveTypeIdAllocate" name="Id"/>
 </form>
 
 @section Scripts{
-    <script>
+  <script>
         $(function(){
 
             $('.table').DataTable();
@@ -63,6 +74,22 @@
                             var id = btn.data("id");
                             $('#leaveTypeId').val(id);
                             $('#deleteFrom').submit();
+                        }
+                    });
+            });
+            $('.allocateBtn').click(function(e) {
+                swal({
+                    title: "Are you sure?",
+                    text: "Are you sure you want to allocate this leave to all employees?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true
+                }).then((confirm) => {
+                        if(confirm){
+                            var btn = $(this);
+                            var id = btn.data("id");
+                            $('#leaveTypeIdAllocate').val(id);
+                            $('#allocationForm').submit();
                         }
                     });
             });
