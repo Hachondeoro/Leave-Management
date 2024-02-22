@@ -17,5 +17,8 @@ namespace LeaveManagement.Web.Models
 
         [Display(Name = "Email Address")]
         public string Email { get; set; }
+
+        [Display(Name = "Employment Type")]
+        public string? EmploymentType { get; set; }
     }
 }

@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.DateJoined)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmploymentType)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -38,6 +41,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateJoined)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmploymentType)
             </td>
             <td>
                 <a asp-action="ViewAllocations" class="btn btn-primary" asp-route-id="@item.Id">View Allocations</a>
