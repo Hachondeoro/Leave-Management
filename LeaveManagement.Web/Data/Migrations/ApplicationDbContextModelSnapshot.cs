@@ -109,7 +109,7 @@ namespace LeaveManagement.Web.Data.Migrations
                         {
                             Id = "408aa945-3d84-4421-8342-7269ec64d949",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f94e8b4e-fb48-438d-b336-0e89a4946756",
+                            ConcurrencyStamp = "69d1a2e7-a2a3-4684-a4cc-befc168bee8d",
                             DateJoined = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@localhost.com",
@@ -119,9 +119,9 @@ namespace LeaveManagement.Web.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEF6nxfBoWWr23MhVexDhXY19lVQkl76MagkCm8az5MLMMfhUKcLKG8HoymnfbXSj/Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFlDLJuLARsDloabYTrj6UvyTGRfH2ZNHHxzzj/JZXDIvY5YdTnzmdjQHVAx5cU9KA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d7be61b5-a2c6-4aeb-8a7d-61de25751bf9",
+                            SecurityStamp = "b0b0a021-2ffb-4765-b6ee-02346795f368",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -129,7 +129,7 @@ namespace LeaveManagement.Web.Data.Migrations
                         {
                             Id = "3f4631bd-f907-4409-b416-ba356312e659",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b6b0a09f-4581-47c9-a12d-d6fd2b7670ff",
+                            ConcurrencyStamp = "4880ba95-ac94-47cd-8555-a9e78c65154b",
                             DateJoined = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@localhost.com",
@@ -139,9 +139,9 @@ namespace LeaveManagement.Web.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGVFNDBa+EcJc24XgIsL3G2pesQpBDmjdMPlGwnbAkeBBm9CH7mkWIBN2u8fHU2rkQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAtJ0tSuOvpRe1Zllq4a4piKXzUAaNGMiQ9jwJeQ4GJaW5s1kkWjnfPIDL2tT97rrQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0aeff7dc-41d9-4d1c-a437-874c6415c46d",
+                            SecurityStamp = "f2342d0b-dfa4-4d08-9de1-3c82cf8e6ff1",
                             TwoFactorEnabled = false,
                             UserName = "user@localhost.com"
                         });
@@ -157,11 +157,11 @@ namespace LeaveManagement.Web.Data.Migrations
 
                     b.Property<string>("AssigneeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssignerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -180,6 +180,10 @@ namespace LeaveManagement.Web.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssigneeId");
+
+                    b.HasIndex("AssignerId");
 
                     b.ToTable("EmployeeTasks");
                 });
@@ -201,16 +205,22 @@ namespace LeaveManagement.Web.Data.Migrations
 
                     b.Property<string>("EmployeeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExpenseDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Expenses");
                 });
@@ -351,14 +361,14 @@ namespace LeaveManagement.Web.Data.Migrations
                         new
                         {
                             Id = "cac43a6e-f7bb-4448-baaf-1add431ccbbf",
-                            ConcurrencyStamp = "d8c34be0-b679-4761-b887-7bca73ec6953",
+                            ConcurrencyStamp = "f86ba42a-a9c5-4988-a2f0-7f3bf1ac6b65",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = "cac43a7e-f7cb-4148-baaf-1acb431eabbf",
-                            ConcurrencyStamp = "fa6631cc-4d52-4f8a-8880-0fa76c87b5fd",
+                            ConcurrencyStamp = "6b5b120f-e345-4803-851e-7343aa4b77ca",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -486,6 +496,36 @@ namespace LeaveManagement.Web.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("LeaveManagement.Web.Data.EmployeeTask", b =>
+                {
+                    b.HasOne("LeaveManagement.Web.Data.Employee", "Assignee")
+                        .WithMany("EmployeeTasksAssigned")
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LeaveManagement.Web.Data.Employee", "Assigner")
+                        .WithMany("EmployeeTasksAssignedBy")
+                        .HasForeignKey("AssignerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Assignee");
+
+                    b.Navigation("Assigner");
+                });
+
+            modelBuilder.Entity("LeaveManagement.Web.Data.Expense", b =>
+                {
+                    b.HasOne("LeaveManagement.Web.Data.Employee", "Employee")
+                        .WithMany("ExpensesRecorded")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("LeaveManagement.Web.Data.LeaveAllocation", b =>
                 {
                     b.HasOne("LeaveManagement.Web.Data.LeaveType", "LeaveType")
@@ -557,6 +597,15 @@ namespace LeaveManagement.Web.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LeaveManagement.Web.Data.Employee", b =>
+                {
+                    b.Navigation("EmployeeTasksAssigned");
+
+                    b.Navigation("EmployeeTasksAssignedBy");
+
+                    b.Navigation("ExpensesRecorded");
                 });
 #pragma warning restore 612, 618
         }

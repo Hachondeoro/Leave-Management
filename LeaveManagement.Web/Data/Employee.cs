@@ -10,4 +10,7 @@ public class Employee : IdentityUser
     public string? EmploymentType { get; set; }
     public DateTime DateOfBirth { get; set; }
     public DateTime DateJoined { get; set; }
+    public virtual ICollection<EmployeeTask>? EmployeeTasksAssigned { get; set; }
+    public virtual ICollection<EmployeeTask>? EmployeeTasksAssignedBy { get; set; }
+    public virtual ICollection<Expense>? ExpensesRecorded { get; set; }
 }
