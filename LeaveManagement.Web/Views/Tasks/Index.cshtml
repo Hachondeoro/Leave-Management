@@ -5,40 +5,53 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+@if (User.IsInRole(Roles.Administrator))
+{
+    <h1>All tasks</h1>
+}
+else
+{
+    <h1>My tasks</h1>
+}
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div>
+    @if (User.IsInRole(Roles.Administrator))
+    {
+        <p>
+            <a asp-action="Create">Create New task</a>
+        </p>
+    }
+</div>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AssigneeId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AssignerId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AssigneeId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AssignerId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DueDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -47,26 +60,31 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AssigneeId)
+                @($"{item.Assignee.Firstname} {item.Assignee.Lastname}")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AssignerId)
+                @($"{item.Assigner.Firstname} {item.Assigner.Lastname}")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @(item.StartDate.HasValue ? item.StartDate.Value.ToString("dd MMM yyyy") : "N/A")<br/>
+                @(item.StartDate.HasValue ? item.StartDate.Value.ToString("h:mm tt") : "N/A")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
+                @(item.DueDate.HasValue ? item.DueDate.Value.ToString("dd MMM yyyy") : "N/A")<br/>
+                @(item.DueDate.HasValue ? item.DueDate.Value.ToString("h:mm tt") : "N/A")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.IsInRole(Roles.Administrator))
+                {
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

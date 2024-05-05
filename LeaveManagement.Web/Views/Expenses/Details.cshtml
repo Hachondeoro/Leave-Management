@@ -1,4 +1,4 @@
-@model LeaveManagement.Web.Data.EmployeeTask
+@model LeaveManagement.Web.Data.Expense
 
 @{
     ViewData["Title"] = "Details";
@@ -8,7 +8,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>EmployeeTask</h4>
+    <h4>Expense</h4>
     <hr/>
     <dl class="row">
         <dt class="col-sm-2">
@@ -24,34 +24,29 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssigneeId)
+            @Html.DisplayNameFor(model => model.Amount)
         </dt>
         <dd class="col-sm-10">
-            @ViewBag.AssigneeName
+            @Html.DisplayFor(model => model.Amount)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssignerId)
+            @Html.DisplayNameFor(model => model.ExpenseDate)
         </dt>
         <dd class="col-sm-10">
-            @ViewBag.AssignerName
+            @Html.DisplayFor(model => model.ExpenseDate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
+            @Html.DisplayNameFor(model => model.EmployeeId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DueDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DueDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Status)
+            @if (Model.Employee != null)
+            {
+                @(Model.Employee.Firstname + " " + Model.Employee.Lastname)
+            }
+            else
+            {
+                <p>No associated employee</p>
+            }
         </dd>
     </dl>
 </div>
