@@ -1,34 +1,49 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using LeaveManagement.Web.Constants;
+using LeaveManagement.Web.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using LeaveManagement.Web.Data;
 
 namespace LeaveManagement.Web.Controllers;
 
 public class TasksController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<Employee> _userManager;
 
-    public TasksController(ApplicationDbContext context)
+
+    public TasksController(ApplicationDbContext context, UserManager<Employee> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     // GET: Tasks
-    public async Task<IActionResult> Index()
+    public Task<IActionResult> Index()
     {
-        return View(await _context.EmployeeTasks.ToListAsync());
+        IQueryable<EmployeeTask> taskQuery = _context.EmployeeTasks;
+
+        if (!User.IsInRole(Roles.Administrator))
+        {
+            var userId = _userManager.GetUserId(User);
+            taskQuery = taskQuery.Where(task => task.AssigneeId == userId);
+        }
+
+        var tasks = taskQuery
+            .Include(e => e.Assignee)
+            .Include(e => e.Assigner)
+            .ToList();
+
+        return Task.FromResult<IActionResult>(View(tasks));
     }
 
     // GET: Tasks/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
-        {3
+        {
             return NotFound();
         }
 
@@ -39,13 +54,41 @@ public class TasksController : Controller
             return NotFound();
         }
 
+        var assignee = _context.Users.FirstOrDefault(u => u.Id == employeeTask.AssigneeId);
+        if (assignee != null)
+        {
+            ViewBag.AssigneeName = assignee.Firstname + " " + assignee.Lastname;
+        }
+
+        var assigner = _context.Users.FirstOrDefault(u => u.Id == employeeTask.AssignerId);
+        if (assigner != null)
+        {
+            ViewBag.AssignerName = assigner.Firstname + " " + assigner.Lastname;
+        }
+
+
         return View(employeeTask);
     }
 
     // GET: Tasks/Create
+    [Authorize(Roles = Roles.Administrator)]
     public IActionResult Create()
     {
-        return View();
+        var currentUserId = _userManager.GetUserId(User);
+        var model = new EmployeeTask
+        {
+            AssignerId = currentUserId
+        };
+        var employeesList = _context.Users.ToList().Select(e => new
+            {
+                Id = e.Id,
+                Name = e.Firstname + " " + e.Lastname
+            })
+            .ToList();
+
+        ViewBag.Employees = new SelectList(employeesList, "Id", "Name");
+
+        return View(model);
     }
 
     // POST: Tasks/Create
@@ -53,11 +96,16 @@ public class TasksController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> Create(
-        [Bind("Id,Title,Description,AssigneeId,AssignerId,StartDate,DueDate,Status")] EmployeeTask employeeTask)
+        [Bind("Id,Title,Description,AssigneeId,AssignerId,StartDate,DueDate,Status")]
+        EmployeeTask employeeTask)
     {
         if (ModelState.IsValid)
         {
+            string currentUserId = _userManager.GetUserId(User);
+            employeeTask.AssignerId = currentUserId; // setting current user id as assigner id
+
             _context.Add(employeeTask);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -74,10 +122,26 @@ public class TasksController : Controller
             return NotFound();
         }
 
+        var employeesList = _context.Users.ToList().Select(e => new
+            {
+                Id = e.Id,
+                Name = e.Firstname + " " + e.Lastname
+            })
+            .ToList();
+
+        ViewBag.Employees = new SelectList(employeesList, "Id", "Name");
+
+
         var employeeTask = await _context.EmployeeTasks.FindAsync(id);
         if (employeeTask == null)
         {
             return NotFound();
+        }
+
+        var assigner = _context.Users.FirstOrDefault(u => u.Id == employeeTask.AssignerId);
+        if (assigner != null)
+        {
+            ViewBag.AssignerName = assigner.Firstname + " " + assigner.Lastname;
         }
 
         return View(employeeTask);
@@ -89,7 +153,8 @@ public class TasksController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id,
-        [Bind("Id,Title,Description,AssigneeId,AssignerId,StartDate,DueDate,Status")] EmployeeTask employeeTask)
+        [Bind("Id,Title,Description,AssigneeId,AssignerId,StartDate,DueDate,Status")]
+        EmployeeTask employeeTask)
     {
         if (id != employeeTask.Id)
         {
@@ -122,6 +187,7 @@ public class TasksController : Controller
     }
 
     // GET: Tasks/Delete/5
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -136,16 +202,30 @@ public class TasksController : Controller
             return NotFound();
         }
 
+        var assignee = _context.Users.FirstOrDefault(u => u.Id == employeeTask.AssigneeId);
+        if (assignee != null)
+        {
+            ViewBag.AssigneeName = assignee.Firstname + " " + assignee.Lastname;
+        }
+
+        var assigner = _context.Users.FirstOrDefault(u => u.Id == employeeTask.AssignerId);
+        if (assigner != null)
+        {
+            ViewBag.AssignerName = assigner.Firstname + " " + assigner.Lastname;
+        }
+
         return View(employeeTask);
     }
 
     // POST: Tasks/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var employeeTask = await _context.EmployeeTasks.FindAsync(id);
         _context.EmployeeTasks.Remove(employeeTask);
+
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }

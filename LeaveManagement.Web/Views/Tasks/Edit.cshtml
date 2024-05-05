@@ -8,49 +8,58 @@
 <h1>Edit</h1>
 
 <h4>EmployeeTask</h4>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id"/>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control"/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <input asp-for="Description" class="form-control"/>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AssigneeId" class="control-label"></label>
-                <input asp-for="AssigneeId" class="form-control" />
+                <select asp-for="AssigneeId" class="form-control" asp-items="ViewBag.Employees">
+                    <option value="">-- Select Assignee --</option>
+                </select>
                 <span asp-validation-for="AssigneeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AssignerId" class="control-label"></label>
-                <input asp-for="AssignerId" class="form-control" />
-                <span asp-validation-for="AssignerId" class="text-danger"></span>
+                <p class="ps-3">@ViewBag.AssignerName</p>
+                <input asp-for="AssignerId" type="hidden"/>
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                <input asp-for="StartDate" class="form-control"/>
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DueDate" class="control-label"></label>
-                <input asp-for="DueDate" class="form-control" />
+                <input asp-for="DueDate" class="form-control"/>
                 <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
+                <select asp-for="Status" class="form-control">
+                    <option value="">-- Select Status --</option>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="On Hold">On Hold</option>
+                </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary"/>
             </div>
         </form>
     </div>
@@ -59,4 +68,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
