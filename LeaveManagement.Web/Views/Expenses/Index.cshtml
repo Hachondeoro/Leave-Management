@@ -32,10 +32,19 @@ else
         <th>
             @Html.DisplayNameFor(model => model.ExpenseDate)
         </th>
+        @if (User.IsInRole(Roles.Administrator))
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.EmployeeId)
+            </th>
+        }
+
         <th>
-            @Html.DisplayNameFor(model => model.EmployeeId)
+            @Html.DisplayNameFor(model => model.Status)
         </th>
         <th></th>
+
+
     </tr>
     </thead>
     <tbody>
@@ -54,13 +63,49 @@ else
             <td>
                 @item.ExpenseDate.ToString("dd MMM yyyy h:mm tt")
             </td>
+            @if (User.IsInRole(Roles.Administrator))
+            {
+                <td>
+                    @($"{item.Employee.Firstname} {item.Employee.Lastname}")
+                </td>
+            }
             <td>
-                @($"{item.Employee.Firstname} {item.Employee.Lastname}")
+                @{
+                    var status = item.Status;
+                    string statusStyleClass = string.Empty;
+
+                    switch (status)
+                    {
+                        case "Approved":
+                            statusStyleClass = "text-success";
+                            break;
+                        case "Pending":
+                            statusStyleClass = "text-secondary";
+                            break;
+                        case "Rejected":
+                            statusStyleClass = "text-danger";
+                            break;
+                    }
+                }
+
+                <span class="@statusStyleClass fw-bold">
+                    @Html.DisplayFor(modelItem => status)
+                </span>
             </td>
+
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.IsInRole(Roles.Administrator))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <span> | </span>
+                }
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.IsInRole(Roles.Administrator))
+                {
+                    <span> | </span>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
+
             </td>
         </tr>
     }

@@ -24,6 +24,12 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult AccessDenied()
+    {
+        ViewData["title"] = "Access Denied";
+        return View("AccessDenied");
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

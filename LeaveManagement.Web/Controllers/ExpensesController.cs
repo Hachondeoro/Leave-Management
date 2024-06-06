@@ -1,5 +1,6 @@
 using LeaveManagement.Web.Constants;
 using LeaveManagement.Web.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,7 @@ public class ExpensesController : Controller
         if (ModelState.IsValid)
         {
             string currentUserId = _userManager.GetUserId(User);
+            expense.Status = "Under review"; // Set status to "Under review
             expense.EmployeeId = currentUserId;
 
             _context.Add(expense);
@@ -86,6 +88,7 @@ public class ExpensesController : Controller
     }
 
     // GET: Expenses/Edit/5
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -107,8 +110,9 @@ public class ExpensesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> Edit(int id,
-        [Bind("Id,Title,Description,Amount,ExpenseDate,EmployeeId")]
+        [Bind("Id,Title,Description,Amount,ExpenseDate,EmployeeId, Status")]
         Expense expense)
     {
         if (id != expense.Id)
@@ -142,6 +146,7 @@ public class ExpensesController : Controller
     }
 
     // GET: Expenses/Delete/5
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -162,6 +167,7 @@ public class ExpensesController : Controller
     // POST: Expenses/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.Administrator)]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var expense = await _context.Expenses.FindAsync(id);
